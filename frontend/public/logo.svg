@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="Medical Hackathon Icon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00D0A3"/>
+      <stop offset="100%" stop-color="#2C7BE5"/>
+    </linearGradient>
+  </defs>
+  <rect rx="28" ry="28" x="8" y="8" width="176" height="176" fill="url(#g)"/>
+  <g transform="translate(20,20)">
+    <path d="M76 0 L152 30 V100c0 46-34 74-76 86C34 174 0 146 0 100V30z" fill="rgba(255,255,255,.15)"/>
+    <g fill="#fff">
+      <rect x="64" y="44" width="24" height="72" rx="4"/>
+      <rect x="42" y="66" width="72" height="24" rx="4"/>
+    </g>
+    <path d="M12 134 L54 134 L64 112 L72 150 L86 120 L96 134 L152 134"
+          fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
