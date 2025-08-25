@@ -42,7 +42,9 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
-
+html {
+  scroll-behavior: smooth;
+}
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -119,4 +121,12 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+/* Hide Scrollbar but keep scroll functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
 }
