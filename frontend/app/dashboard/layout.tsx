@@ -72,13 +72,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Topbar */}
         <header className="h-24 bg-[#363636] border-b border-white/10 text-white flex items-center justify-between px-6 py-4 shadow">
           <h1 className="font-semibold">My Dashboard</h1>
-          <div className="flex gap-2">
-            <Button className="px-4 py-2 border-2 border-indigo-600 bg-white rounded-md hover:bg-indigo-700 text-indigo-600 transition hover:text-white">
-              Sign Up
-            </Button>
-            <Button className="px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-700 text-white transition">
-              Sign In
-            </Button>
+          <div className="flex gap-2 items-center">
+            {/* ✅ Dropdown for logged in user */}
+            {loggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center space-x-2 cursor-pointer">
+                  <span className="hidden sm:inline">{username}</span>
+                  <User className="text-white" size={28} />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#1b1b1b] text-white">
+                  <DropdownMenuLabel className="text-gray-300">Signed in as {username}</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:bg-red-500 hover:text-white">
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link href="../auth/register">
+                  <Button className="px-4 py-2 border-2 border-indigo-600 bg-white rounded-md hover:bg-indigo-700 text-indigo-600 transition hover:text-white">
+                    Sign Up
+                  </Button>
+                </Link>
+                <Link href="../auth/login">
+                  <Button className="px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-700 text-white transition">
+                    Sign In
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </header>
 
