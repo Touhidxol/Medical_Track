@@ -1,4 +1,3 @@
-// app/dashboard/layout.tsx
 "use client";
 
 import { useState } from "react";
@@ -62,7 +61,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Topbar */}
-        <header className="h-24 bg-[#363636] border-b border-white/10 text-white flex items-center justify-between px-6 py-4 shadow">
+        <header className="h-24 bg-[#363636] border-b border-white/10 text-white flex items-center justify-between px-6 py-2 shadow">
           <h1 className="font-semibold">My Dashboard</h1>
           <div className="flex gap-2">
             <Button className="px-4 py-2 border-2 border-indigo-600 bg-white rounded-md hover:bg-indigo-700 text-indigo-600 transition hover:text-white">
@@ -76,21 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Content */}
         <main className="flex flex-col items-center p-6 bg-[#363636] text-gray-100 h-[95vh]">
-          <div className="flex-1 overflow-y-auto w-full max-w-3xl px-2 scroll-smooth scrollbar-hide">
-            {children}
-          </div>
-          {/* The Input */}
-          <div className="flex justify-center w-8/10 h-12 mb-8 mt-4 ">
-            <div className="flex items-center w-full max-w-xl bg-white/10 rounded-full p-2 shadow border-gray-500 border">
-              <Plus className="ml-3 text-white/90" size={20} />
-              <input
-                type="text"
-                placeholder="Ask anything"
-                className="flex-1 bg-transparent px-3 outline-none text-white/90"
-              />
-              <Mic className="mr-3 text-white/90" size={20} />
-            </div>
-          </div>
+          {children}
         </main>
 
       </div>
