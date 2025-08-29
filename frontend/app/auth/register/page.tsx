@@ -5,9 +5,10 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 
-//const router = useRouter();
+
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -29,7 +30,7 @@ export default function RegisterPage() {
     setErrors({ ...errors, [e.target.name]: "" }); // clear error as user types
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     let newErrors: any = {};
 
@@ -50,9 +51,9 @@ export default function RegisterPage() {
     localStorage.setItem("userData", JSON.stringify(form));
 
     //alert("Account created successfully!");
-    toast.success("Account created successfully!");
-    //router.push("/auth/login");
-
+    //toast.success("Account created successfully!");
+    router.push("/auth/login");
+`   `
   };
 
   return (
@@ -129,10 +130,10 @@ export default function RegisterPage() {
               <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
             )}
           </div>
-
+            
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition"
+            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 cursor-pointer text-white font-semibold transition"
           >
             Sign Up
           </button>
@@ -140,7 +141,7 @@ export default function RegisterPage() {
 
         <div className="mt-6 text-center text-slate-400 text-sm">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-indigo-400 hover:underline">
+          <Link href="/auth/login" className="text-indigo-400 cursor-pointer hover:underline">
             Sign in
           </Link>
         </div>
