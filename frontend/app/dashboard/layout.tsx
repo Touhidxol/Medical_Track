@@ -1,4 +1,3 @@
-// app/dashboard/layout.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -71,7 +70,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Topbar */}
-        
+        <header className="h-24 bg-[#363636] border-b border-white/10 text-white flex items-center justify-between px-6 py-4 shadow">
+          <h1 className="font-semibold">My Dashboard</h1>
+          <div className="flex gap-2">
+            <Button className="px-4 py-2 border-2 border-indigo-600 bg-white rounded-md hover:bg-indigo-700 text-indigo-600 transition hover:text-white">
+              Sign Up
+            </Button>
+            <Button className="px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-700 text-white transition">
+              Sign In
+            </Button>
+          </div>
+        </header>
 
         {/* Content */}
         <main className="flex flex-col items-center p-6 bg-[#363636] text-gray-100 h-[95vh]">
