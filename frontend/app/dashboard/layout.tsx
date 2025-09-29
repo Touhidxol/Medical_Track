@@ -9,18 +9,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="flex h-screen bg-[#363636] text-white overflow-hidden">
+    <div className="flex h-screen bg-[#212121] text-white overflow-hidden">
       {/* Sidebar */}
       <aside
-        className={`${open ? "w-64" : "w-20"
-          } bg-[#1b1b1b] transition-all duration-300 flex flex-col`}
+        className={`${open ? "w-64 bg-[#181818]" : "w-20 bg-[#212121] "} md:flex hidden transition-all border-r border-white/10 duration-300 flex-col`}
       >
         {/* Logo + Toggle */}
         <div className={`flex items-center ${open ? 'justify-between' : 'justify-center'} p-4 `}>
           <h2 className={`${open ? "block" : "hidden"} text-xl font-bold`}>
             Med
           </h2>
-          <button onClick={() => setOpen(!open)} className="p-1">
+          <button onClick={() => setOpen(!open)} className="p-1 cursor-w-resize">
             ☰
           </button>
         </div>
@@ -59,22 +58,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="h-full flex-1 flex flex-col">
         {/* Topbar */}
-        <header className="h-24 bg-[#363636] border-b border-white/10 text-white flex items-center justify-between px-6 py-2 shadow">
-          <h1 className="font-semibold">My Dashboard</h1>
+        <header className="h-1/10 bg-[#212121] border-b border-white/10 text-white flex items-center justify-between px-6 shadow">
+          <h1 className="font-semibold">MediChat</h1>
           <div className="flex gap-2">
-            <Button className="px-4 py-2 border-2 border-indigo-600 bg-white rounded-md hover:bg-indigo-700 text-indigo-600 transition hover:text-white">
-              Sign Up
-            </Button>
-            <Button className="px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-700 text-white transition">
+            <Button className="px-4 py-2 bg-white/95 rounded-md hover:bg-white text-black transition cursor-pointer">
               Sign In
             </Button>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex flex-col items-center p-6 bg-[#363636] text-gray-100 h-[95vh]">
+        <main className="relative h-9/10 flex flex-col items-center p-2 bg-[#212121] text-gray-100">
           {children}
         </main>
 
