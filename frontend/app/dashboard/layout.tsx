@@ -2,16 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";  // ✅ added
 import { Button } from "@/components/ui/button";
-import { Home, Bot, Settings, Library, Plus, Mic, User } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";  // ✅ shadcn dropdown
+import { Home, Bot, Settings, Library, MessagesSquare } from "lucide-react";
+
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
@@ -49,24 +44,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4 space-y-3">
-          <Link href="/dashboard" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
-            <Home size={20} />
-            {open && <span>Home</span>}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-3 overflow-hidden">
+          <Link href="/dashboard" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 px-3 hover:bg-white/5 p-2 rounded-md`}>
+            <MessagesSquare size={20} />
+            {open && <span>Chat</span>}
           </Link>
-          <Link href="/dashboard/chatbot" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
-            <Bot size={20} />
-            {open && <span>Chatbot</span>}
-          </Link>
-          <Link href="/dashboard/settings" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
-            <Settings size={20} />
-            {open && <span>Settings</span>}
-          </Link>
-          <Link href="/dashboard/library" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
+          <Link href="/dashboard/library" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 px-3 hover:bg-white/5 p-2 rounded-md`}>
             <Library size={20} />
             {open && <span>Library</span>}
           </Link>
+          <Link href="/dashboard/settings" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 px-3 hover:bg-white/5 p-2 rounded-md`}>
+            <Settings size={20} />
+            {open && <span>Settings</span>}
+          </Link>
         </nav>
+
+        <footer>
+          <div className={`${open ? "" : "justify-center"} flex gap-2 p-2 px-4 my-4 items-center `}>
+            <div className="flex justify-center items-center bg-red-500 rounded-full h-10 w-10"><p>P</p></div>
+            <div className={`${open ? "block" : "hidden"} flex flex-col flex-1`}>
+              <p>User Name</p>
+              <p className="text-sm text-gray-500">user@email.co</p>
+            </div>
+            <div className={`${open ? "block" : "hidden"} h-10 w-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5`}>
+              <img
+                src="/logout.svg"
+                alt="logout"
+                className="w-1/2 h-1/2 object-contain"
+              />
+            </div>
+          </div>
+        </footer>
       </aside>
 
       {/* Main Content */}
