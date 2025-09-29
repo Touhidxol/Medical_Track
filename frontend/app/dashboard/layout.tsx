@@ -1,12 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";  // ✅ added
 import { Button } from "@/components/ui/button";
-import { Home, Bot, Settings, Search, Library, Plus, Mic } from "lucide-react";
+import { Home, Bot, Settings, Library, Plus, Mic, User } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";  // ✅ shadcn dropdown
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");  // ✅ store user name
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userData");
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setLoggedIn(true);
+      setUsername(parsed.name || "User");  // ✅ pull name from localStorage
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userData");  // ✅ clear session
+    setLoggedIn(false);
+    router.push("../auth/login");  // ✅ redirect to login
+  };
 
   return (
     <div className="flex h-screen bg-[#212121] text-white overflow-hidden">
@@ -14,7 +40,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside
         className={`${open ? "w-64 bg-[#181818]" : "w-20 bg-[#212121] "} md:flex hidden transition-all border-r border-white/10 duration-300 flex-col`}
       >
-        {/* Logo + Toggle */}
         <div className={`flex items-center ${open ? 'justify-between' : 'justify-center'} p-4 `}>
           <h2 className={`${open ? "block" : "hidden"} text-xl font-bold`}>
             Med
@@ -24,33 +49,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </button>
         </div>
 
-        {/* Nav Links */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-3">
-          <Link
-            href="/dashboard"
-            className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md `}
-          >
+          <Link href="/dashboard" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
             <Home size={20} />
             {open && <span>Home</span>}
           </Link>
-          <Link
-            href="/dashboard/chatbot"
-            className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md `}
-          >
+          <Link href="/dashboard/chatbot" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
             <Bot size={20} />
             {open && <span>Chatbot</span>}
           </Link>
-          <Link
-            href="/dashboard/settings"
-            className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md `}
-          >
+          <Link href="/dashboard/settings" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
             <Settings size={20} />
             {open && <span>Settings</span>}
           </Link>
-          <Link
-            href="/dashboard/library"
-            className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md `}
-          >
+          <Link href="/dashboard/library" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 hover:bg-gray-800 p-2 rounded-md`}>
             <Library size={20} />
             {open && <span>Library</span>}
           </Link>
@@ -73,7 +85,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="relative h-9/10 flex flex-col items-center p-2 bg-[#212121] text-gray-100">
           {children}
         </main>
-
       </div>
     </div>
   );
