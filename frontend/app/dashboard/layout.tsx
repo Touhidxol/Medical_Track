@@ -83,7 +83,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <header className="h-1/10 bg-[#212121] border-b border-white/10 text-white flex items-center justify-between px-6 shadow">
           <h1 className="font-semibold">MediChat</h1>
           <div className="flex gap-2">
-            <Button className="px-4 py-2 bg-white/95 rounded-md hover:bg-white text-black transition cursor-pointer">
+            <Button
+              onClick={() => { router.push("../auth/login"); }}
+              className="px-4 py-2 bg-white/95 rounded-md hover:bg-white text-black transition cursor-pointer">
               Sign In
             </Button>
           </div>

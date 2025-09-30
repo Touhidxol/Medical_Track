@@ -126,6 +126,7 @@ const Page = () => {
                     <img src='/downarrow.svg' alt="downarrow" />
                 </button>
             )}
+            
             <div className="absolute flex bottom-0 justify-center w-full pb-2 pt-2 bg-gradient-to-b from-transparent to-[#212121]">
                 <div className="flex flex-col w-full max-w-3xl">
                     {/* Preview Section for Images / Docs */}
