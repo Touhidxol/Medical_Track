@@ -5,26 +5,28 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";  // ✅ added
 import { Button } from "@/components/ui/button";
-import { Home, Bot, Settings, Library, MessagesSquare } from "lucide-react";
+import { Settings, Library, MessagesSquare } from "lucide-react";
+import { useSession, signIn, signOut } from "next-auth/react"
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");  // ✅ store user name
   const router = useRouter();
+  const { data: session,status } = useSession()
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser);
+    if (status === "authenticated") {
       setLoggedIn(true);
-      setUsername(parsed.name || "User");  // ✅ pull name from localStorage
+      console.log("✅ Session Found:", session);
+    } else {
+      setLoggedIn(false);
+      console.log("No session");
     }
-  }, []);
+  }, [status, session]);
 
   const handleLogout = () => {
-    localStorage.removeItem("userData");  // ✅ clear session
+    signOut();
     setLoggedIn(false);
     router.push("../auth/login");  // ✅ redirect to login
   };
@@ -60,20 +62,40 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         <footer>
-          <div className={`${open ? "" : "justify-center"} flex gap-2 p-2 px-4 my-4 items-center `}>
-            <div className="flex justify-center items-center bg-red-500 rounded-full h-10 w-10"><p>P</p></div>
-            <div className={`${open ? "block" : "hidden"} flex flex-col flex-1`}>
-              <p>User Name</p>
-              <p className="text-sm text-gray-500">user@email.co</p>
+          {loggedIn ? (
+            <div className={`${open ? "" : "justify-center"} flex gap-2 p-2 px-4 my-4 items-center `}>
+              <div className="flex justify-center items-center bg-blue-600 rounded-full h-10 w-10"><p className="font-bold">{session?.user?.name[0] ||"A"}</p></div>
+              <div className={`${open ? "block" : "hidden"} flex flex-col flex-1`}>
+                <p>{session?.user?.name}</p>
+                <p className="text-sm text-gray-500">{session?.user?.email}</p>
+              </div>
+              <div
+                onClick={handleLogout}
+                className={`${open ? "block" : "hidden"} h-10 w-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5`}
+              >
+                <img
+                  src="/logout.svg"
+                  alt="logout"
+                  className="w-[16px] object-contain"
+                />
+              </div>
             </div>
-            <div className={`${open ? "block" : "hidden"} h-10 w-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5`}>
-              <img
-                src="/logout.svg"
-                alt="logout"
-                className="w-1/2 h-1/2 object-contain"
-              />
-            </div>
-          </div>
+          ) : (
+            open ? (
+              <div className="flex flex-col gap-2 p-2 px-4 my-4 items-center ">
+                <p className="text-sm text-white/70">Sign In to get full chat experience</p>
+                <button className="cursor-pointer w-full p-2 px-4 bg-white/95 text-black rounded-full hover:bg-white">
+                  Sign In
+                </button>
+                <button className="cursor-pointer w-full p-2 px-4 rounded-full border border-white/15 hover:bg-white/5">
+                  Sign Up for free
+                </button>
+              </div>
+            ) : (
+              <div className="hidden">
+              </div>
+            )
+          )}
         </footer>
       </aside>
 
@@ -82,12 +104,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Topbar */}
         <header className="h-1/10 bg-[#212121] border-b border-white/10 text-white flex items-center justify-between px-6 shadow">
           <h1 className="font-semibold">MediChat</h1>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => { router.push("../auth/login"); }}
-              className="px-4 py-2 bg-white/95 rounded-md hover:bg-white text-black transition cursor-pointer">
-              Sign In
-            </Button>
+          <div className="flex">
+            {loggedIn ? (
+              <div className="h-10 w-10 flex justify-center items-center bg-blue-600 rounded-full">
+                <p className="font-bold">{session?.user?.name[0] ||"A"}</p>
+
+              </div>
+            ) : (
+              <Button
+                onClick={() => { router.push("../auth/login"); }}
+                className="px-4 py-2 bg-white/95 rounded-md hover:bg-white text-black transition cursor-pointer"
+              >
+                Sign In
+              </Button>
+            )}
           </div>
         </header>
 
@@ -95,7 +125,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="relative h-9/10 flex flex-col items-center p-2 bg-[#212121] text-gray-100">
           {children}
         </main>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

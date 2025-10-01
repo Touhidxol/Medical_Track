@@ -3,9 +3,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react"
+
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session } = useSession()
 
   const [form, setForm] = useState({
     email: "",
@@ -24,7 +27,7 @@ export default function LoginPage() {
     setErrors({ ...errors, [e.target.name]: "" }); // clear error as user types
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let newErrors: any = {};
 
@@ -34,26 +37,20 @@ export default function LoginPage() {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    // ✅ Check saved user in localStorage (temp auth)
-    const storedUser = localStorage.getItem("userData");
-    if (!storedUser) {
-      toast.error("No account found. Please register first.");
-      return;
+    // 🔑 Call NextAuth with credentials provider
+    const res = await signIn("credentials", {
+      email: form.email,
+      password: form.password,
+      redirect: false, // prevent auto redirect so you can handle manually
+    });
+
+    if (res?.error) {
+      toast.error(res.error);
+    } else {
+      toast.success("Login successful!");
+      router.push("/dashboard"); // redirect wherever you want after login
     }
 
-    const userData = JSON.parse(storedUser);
-    
-    if (
-      form.email === userData.email &&
-      form.password === userData.password
-    ) {
-      toast.success("Login successful!");
-      router.push("/dashboard");
-    } else {
-      toast.error("Invalid email or password.");
-      setErrors({ ...errors, password: "Invalid password." });
-      // Show generic error to avoid revealing which field is incorrect 
-    }
   };
 
   return (
@@ -72,11 +69,9 @@ export default function LoginPage() {
               placeholder="Email"
               value={form.email}
               onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border ${
-                errors.email ? "border-red-500" : "border-white/20"
-              } text-white placeholder-slate-400 focus:outline-none focus:ring-2 ${
-                errors.email ? "focus:ring-red-500" : "focus:ring-indigo-400"
-              }`}
+              className={`w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border ${errors.email ? "border-red-500" : "border-white/20"
+                } text-white placeholder-slate-400 focus:outline-none focus:ring-2 ${errors.email ? "focus:ring-red-500" : "focus:ring-indigo-400"
+                }`}
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -90,17 +85,14 @@ export default function LoginPage() {
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border ${
-                errors.password ? "border-red-500" : "border-white/20"
-              } text-white placeholder-slate-400 focus:outline-none focus:ring-2 ${
-                errors.password ? "focus:ring-red-500" : "focus:ring-indigo-400"
-              }`}
+              className={`w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border ${errors.password ? "border-red-500" : "border-white/20"
+                } text-white placeholder-slate-400 focus:outline-none focus:ring-2 ${errors.password ? "focus:ring-red-500" : "focus:ring-indigo-400"
+                }`}
             />
             <div
               onClick={() => setIsVisible(!IsVisible)}
-              className={`text-white ${
-                IsVisible ? "opacity-100" : "opacity-30"
-              } absolute right-3 top-3 cursor-pointer`}
+              className={`text-white ${IsVisible ? "opacity-100" : "opacity-30"
+                } absolute right-3 top-3 cursor-pointer`}
             >
               👁
             </div>

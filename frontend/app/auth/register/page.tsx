@@ -1,11 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-
-
-
+import { registerUser } from "@/app/actions/register";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -30,10 +27,10 @@ export default function RegisterPage() {
     setErrors({ ...errors, [e.target.name]: "" }); // clear error as user types
   };
 
-  const handleSubmit = async(e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let newErrors: any = {};
-
+    //-----------------Signup form validation----------------------------------------------------
     if (!form.name.trim()) newErrors.name = "Full name is required.";
     if (!form.email.includes("@")) newErrors.email = "Enter a valid email.";
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
@@ -41,19 +38,21 @@ export default function RegisterPage() {
       newErrors.password = " Include an uppercase letter, a number, and a special character.";
     if (form.password !== form.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match.";
-
     setErrors(newErrors);
-
+    //-------------------------------------------------------------------------------------------
     // if any errors exist, stop
     if (Object.keys(newErrors).length > 0) return;
 
-    // Save to localStorage (temp storage)
-    localStorage.setItem("userData", JSON.stringify(form));
-
-    //alert("Account created successfully!");
-    //toast.success("Account created successfully!");
-    router.push("/auth/login");
-`   `
+    const data = { email: form.email, password: form.password, name: form.name }
+    const register = await registerUser(data);
+    if(register.success){
+      console.log("User registered successfully")
+      router.push("/dashboard");
+    }else{
+      console.log(register.error);
+      newErrors.email = register.error;
+      setErrors(newErrors);
+    }
   };
 
   return (
@@ -108,7 +107,7 @@ export default function RegisterPage() {
                 } text-white placeholder-slate-400 focus:outline-none focus:ring-2 ${errors.password ? "focus:ring-red-500" : "focus:ring-indigo-400"
                 }`}
             />
-            <div onClick={() => setIsVisible(!IsVisible)} className={`text-white ${IsVisible?"opacity-100":"opacity-30"} absolute right-3 top-3 cursor-pointer`}>👁</div>
+            <div onClick={() => setIsVisible(!IsVisible)} className={`text-white ${IsVisible ? "opacity-100" : "opacity-30"} absolute right-3 top-3 cursor-pointer`}>👁</div>
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>
             )}
@@ -130,7 +129,7 @@ export default function RegisterPage() {
               <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
             )}
           </div>
-            
+
           <button
             type="submit"
             className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 cursor-pointer text-white font-semibold transition"
