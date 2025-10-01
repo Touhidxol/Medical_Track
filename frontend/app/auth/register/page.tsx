@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/app/actions/register";
+import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast"
+
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -45,18 +48,29 @@ export default function RegisterPage() {
 
     const data = { email: form.email, password: form.password, name: form.name }
     const register = await registerUser(data);
-    if(register.success){
+    if (register.success) {
       console.log("User registered successfully")
-      router.push("/dashboard");
-    }else{
+      toast.success("User registered successfully Login to continue");
+      router.push("/auth/login");
+    } else {
       console.log(register.error);
-      newErrors.email = register.error;
+      newErrors.email = "User with this email already exists.";
       setErrors(newErrors);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800">
+      <Toaster
+        position='top-center'
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
       <div className="w-full max-w-md p-8 rounded-2xl glass-strong glass-ring">
         <h2 className="text-2xl font-bold text-white text-center">Create Account</h2>
         <p className="text-slate-300 text-center text-sm mt-2">

@@ -19,17 +19,5 @@ export async function registerUser(data: {
   const user = new User(data);
   await user.save();
 
-  const res = await signIn("credentials", {
-    email: data.email,
-    password: data.password,
-    redirect: false, // prevent auto redirect so you can handle manually
-  });
-
-  if (res?.error) {
-    return { success: false, error: "Something Went Wrong" };
-  } else {
-    console.log("Login successful!");
-  }
-
   return { success: true };
 }

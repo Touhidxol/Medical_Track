@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast"
 import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react"
 
@@ -48,7 +49,7 @@ export default function LoginPage() {
       toast.error(res.error);
     } else {
       toast.success("Login successful!");
-      router.push("/dashboard"); // redirect wherever you want after login
+      router.push("/dashboard");
     }
 
   };
@@ -116,6 +117,18 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+
+      <Toaster
+        position='top-center'
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
+
     </div>
   );
 }
