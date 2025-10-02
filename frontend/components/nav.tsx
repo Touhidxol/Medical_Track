@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <div className="fixed z-30 top-0 w-full p-6 md:px-10 flex items-center justify-between backdrop-blur-sm bg-white/30">
+    <div className="fixed z-30 top-0 w-full p-6 md:px-10 flex items-center justify-between backdrop-blur-sm bg-white/5">
       {/* Logo */}
       <div>
         <Link href="#hero" className="cursor-pointer">
