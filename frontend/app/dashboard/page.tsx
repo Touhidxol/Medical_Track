@@ -98,8 +98,12 @@ const Page = () => {
     return (
         <>
             <div className="relative flex-1 overflow-y-auto w-full max-w-3xl px-2 scroll-smooth scrollbar-hide" ref={chatContainerRef} onScroll={handleScroll}>
+                {messages.length == 0 && (
+                    <div className="h-full w-full flex flex-col justify-center items-center pb-8">
+                        <p className="text-2xl font-semibold">Ready when You are.</p>
+                    </div>
+                )}
                 <div className="max-w-3xl mx-auto space-y-4 pt-4 pb-32" >
-
                     {messages.map((msg, index) => (
                         <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                             <div className={`px-4 py-2 rounded-2xl max-w-[75%] ${msg.role === "user" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-100"}`}>
@@ -126,7 +130,7 @@ const Page = () => {
                     <img src='/downarrow.svg' alt="downarrow" />
                 </button>
             )}
-            
+
             <div className="absolute flex bottom-0 justify-center w-full pb-2 pt-2 bg-gradient-to-b from-transparent to-[#212121]">
                 <div className="flex flex-col w-full max-w-3xl">
                     {/* Preview Section for Images / Docs */}
