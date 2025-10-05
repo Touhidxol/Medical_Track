@@ -10,6 +10,10 @@ import {
 } from '@/components/ui/shadcn-io/ai/prompt-input';
 import { MicIcon, PaperclipIcon } from 'lucide-react';
 import { type FormEventHandler } from 'react';
+import { saveChat } from "../actions/saveChat";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useChat } from "../context/ChatContext";
+import { getMessages } from "../actions/getMessages";
 
 type Message = {
     role: "user" | "assistant";
@@ -18,12 +22,15 @@ type Message = {
 
 
 const Page = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
     const [showScrollBtn, setShowScrollBtn] = useState(false);
+    const [chatTitle, setchatTitle] = useState('');
+    const { chats, setChats, activeChat, setActiveChat, messages, setMessages } = useChat();
+    const [email, setemail] = useState('');
+    const { data: session } = useSession();
 
     const [text, setText] = useState<string>('');
     const [status, setStatus] = useState<
@@ -38,7 +45,7 @@ const Page = () => {
             container.scrollTop = container.scrollHeight;
         }
     };
-    // Scroll to bottom on load
+    // Scroll to bottom on load and set Chat Title and email on load
     useEffect(() => {
         scrollToBottom();
     }, []);
@@ -53,6 +60,26 @@ const Page = () => {
     };
     //-----------------------------------------------------------------------------------------------
 
+    useEffect(() => {
+        if (session?.user?.email) {
+            setemail(session.user.email);
+        }
+
+        if (messages.length == 0 || !chatTitle) {
+            setchatTitle(`Chat-${Date.now()}`);
+        }
+    }, [session?.user])
+
+    useEffect(() => {
+        async function fetchMessage() {
+            const getChatRes = await getMessages({ title: activeChat, email });
+            setMessages(getChatRes.messages);
+        }
+        setchatTitle(activeChat);
+        fetchMessage();
+    }, [activeChat])
+
+
     const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
         event.preventDefault();
         if (!text) {
@@ -63,7 +90,7 @@ const Page = () => {
         if (!text.trim()) return;
         //first set usermessge
         const userMessage: Message = { role: "user", content: text };
-        setMessages((prev) => [...prev, userMessage]);
+        setMessages([...messages, userMessage]);
         setText("");
         setLoading(true);
         scrollToBottom();
@@ -72,7 +99,7 @@ const Page = () => {
             const formData = new FormData();
             formData.append("text", text);
             setStatus('streaming');
-            // Call your backend API that talks to Gemini
+            // Call your backend API
             const res = await fetch("http://127.0.0.1:8000/analyze", {
                 method: "POST",
                 body: formData,
@@ -82,11 +109,19 @@ const Page = () => {
 
             // Add assistant response
             const botMessage: Message = { role: "assistant", content: data.answer };
-            console.log(data.answer);
-            setMessages((prev) => [...prev, botMessage]);
+            setMessages([...messages, userMessage, botMessage]);
+
+            const chatdata = { email, title: chatTitle };
+
+            const saveChatRes = await saveChat({ ...chatdata, newMessage: userMessage, });
+            if (saveChatRes.isnewChat && activeChat !== chatTitle) {
+                setChats([...chats, chatTitle]);
+                setActiveChat(chatTitle);
+            }
+            await saveChat({ ...chatdata, newMessage: botMessage, });
         } catch (err) {
             console.error(err);
-            setMessages((prev) => [...prev, { role: "assistant", content: "Something Went wrong" },]);
+            setMessages([...messages, { role: "assistant", content: "Something Went wrong" },]);
         } finally {
             setLoading(false);
         }
@@ -99,7 +134,7 @@ const Page = () => {
         <>
             <div className="relative flex-1 overflow-y-auto w-full max-w-3xl px-2 scroll-smooth scrollbar-hide" ref={chatContainerRef} onScroll={handleScroll}>
                 {messages.length == 0 && (
-                    <div className="h-full w-full flex flex-col justify-center items-center pb-8">
+                    <div className="h-3/4 w-full flex flex-col justify-center items-center">
                         <p className="text-2xl font-semibold">Ready when You are.</p>
                     </div>
                 )}

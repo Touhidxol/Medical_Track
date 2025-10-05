@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";  // ✅ added
 import { Button } from "@/components/ui/button";
 import { Settings, Library, MessagesSquare } from "lucide-react";
 import { useSession, signIn, signOut } from "next-auth/react"
+import { getChatTitles } from "../actions/getChatTitles";
+import { ChatProvider, useChat } from "../context/ChatContext";
 import {
   Sheet,
   SheetContent,
@@ -16,19 +18,34 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
-
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ChatProvider>
+      <DashboardLayoutInner>{children}</DashboardLayoutInner>
+    </ChatProvider>
+  );
+}
+
+function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
+  const { chats, setChats, activeChat, setActiveChat } = useChat();
 
   useEffect(() => {
+    const fetchChats = async () => {
+      if (session?.user?.email) {
+        const chatArray = await getChatTitles({ email: session.user.email });
+        setChats(chatArray.chatTitles);
+      }
+    }
     if (status === "authenticated") {
       setLoggedIn(true);
     } else {
       setLoggedIn(false);
     }
+    fetchChats();
   }, [status, session]);
 
   const handleLogout = () => {
@@ -52,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4 space-y-3 overflow-hidden">
+        <nav className="overflow-y-auto p-4 space-y-3 overflow-hidden">
           <Link href="/dashboard" className={`flex items-center ${open ? "justify-start" : "justify-center"} space-x-3 px-3 hover:bg-white/5 p-2 rounded-md`}>
             <MessagesSquare size={20} />
             {open && <span>Chat</span>}
@@ -66,6 +83,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {open && <span>Settings</span>}
           </Link>
         </nav>
+
+        {open && (
+          <div className="flex-1 flex flex-col p-2">
+            <p className="text-white/50 p-2">Chats</p>
+            {chats ? (
+              chats.map((title) => (
+                <div
+                  key={title}
+                  onClick={() => setActiveChat(title)}
+                  className={`${activeChat == title ? "bg-white/5" : ""}w-full p-2 hover:bg-white/5 rounded-md cursor-pointer`}>
+                  <p className="text-base">{title}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-white/50 w-full">No Chats to Show</p>
+            )}
+          </div>
+        )}
+        {!open && <div className="flex-1"></div>}
 
         <footer>
           {loggedIn ? (
